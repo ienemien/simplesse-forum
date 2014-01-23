@@ -1,3 +1,5 @@
 Hello World!
 
-Welkom
+This is Simplesse, a simple forum made to experiment with making a one-page forum. The forum uses AJAX calls to send and receive information from PHP scripts, so that the page doesn't have to reload.
+
+This forum is made by Ineke Vermeulen
