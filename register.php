@@ -1,6 +1,6 @@
 <?php #register.php
-require('mysqli_connect.php');
 require('includes/config.php');
+require(MYSQL);
 
 if (isset($_GET['newname'], $_GET['newmail'], $_GET['newpass'])) {
     $trimmed = array_map('trim', $_GET);

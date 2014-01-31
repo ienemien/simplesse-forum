@@ -81,11 +81,13 @@ body, div, p, h1, h2, h3, h4, h5, h6 {
     background-image: -webkit-linear-gradient(#6b0035, #2f001c);
     background-image: -moz-linear-gradient(#6b0035, #2f001c);
     background-image: -o-linear-gradient(#6b0035, #2f001c);
+	position: relative;
+	display: inline-block;
     cursor: pointer;
     box-sizing: padding-box;
     min-width: 30px;
     height: 25px;
-    margin: 0;
+    margin: 2px;
     border: 1px solid #6b0035;
     border-radius: 3px;
     border-left: none;
@@ -226,6 +228,12 @@ body, div, p, h1, h2, h3, h4, h5, h6 {
     text-align:center;
 }
 
+.new-topic {
+	position: relative;
+	left: 120px;
+	margin: 5px;
+}
+
 /* a message */
     
 .user-info {
@@ -263,6 +271,9 @@ body, div, p, h1, h2, h3, h4, h5, h6 {
 }
 
 .post {
+	position: relative;
+	display: block;
+	min-height: 150px;
     margin-bottom: 20px;
 }
 
@@ -274,10 +285,37 @@ body, div, p, h1, h2, h3, h4, h5, h6 {
     margin-bottom: 20px;
 }
 
-.new-post textarea{
+textarea {
     border-radius: 5px;
     border: 1px solid #2f001c;
     resize: none;
+	outline: none;
+}
+
+#delete-success {
+    margin: 5px;
+}
+
+.delete-post {
+	position: relative;
+	display: inline-block;
+	height: 60px;
+}
+
+.delete-post-form {
+	display: inline-block;
+}
+
+.edit-post {
+	display: block;
+	left: 120px;
+	margin-bottom: 5px;
+}
+
+.post-content {
+	position: relative;
+	display: block;
+	width: auto;
 }
 
 /* Footer */
@@ -296,6 +334,7 @@ body, div, p, h1, h2, h3, h4, h5, h6 {
 
 #current-user-info {
     position: absolute;
+    display: inline-block;
     left: 80px;
     width: 50%;
     text-align: left;

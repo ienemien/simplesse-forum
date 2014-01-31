@@ -1,6 +1,6 @@
 <?php # login.php
-require('mysqli_connect.php');
 require('includes/config.php');
+require(MYSQL);
 
 // Need two pieces of information:
 if (isset($_GET['email'], $_GET['password'])) {

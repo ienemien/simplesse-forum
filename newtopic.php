@@ -1,14 +1,14 @@
-<?php #newpost.php
+<?php #newtopic.php
 require('includes/config.php');
 require(MYSQL);
 
-if (isset($_GET['email'], $_GET['topicid'], $_GET['message'])) { //check if all info is sent
+if (isset($_GET['email'], $_GET['forumid'], $_GET['subject'])) { //check if all info is received
 	
 	//set variables for sent info
     $trimmed = array_map('trim', $_GET); //trim sent info
     $e = mysqli_real_escape_string($dbc, $trimmed['email']);
-    $m = mysqli_real_escape_string($dbc, $trimmed['message']);
-    $t = $trimmed['topicid'];
+    $s = mysqli_real_escape_string($dbc, $trimmed['subject']);
+    $f = $trimmed['forumid'];
 	
 	//select user id from current user
     $q = "SELECT user_id FROM users WHERE email='$e'";
@@ -20,12 +20,12 @@ if (isset($_GET['email'], $_GET['topicid'], $_GET['message'])) { //check if all 
         mysqli_free_result($r);
 		
 		//insert post into posts table
-        $q = "INSERT INTO posts (post_id , topic_id , user_id ,message , date_posted) VALUES ('' , '$t', '$u', '$m', NOW())";
+        $q = "INSERT INTO topics (topic_id , forum_id , user_id ,subject) VALUES ('' , '$f', '$u', '$s')";
         $r = mysqli_query($dbc, $q) or trigger_error("Query: $q\n<br />MYSQL error: " . mysqli_error($dbc));
 		
-		//if the message was succesfully added to the database, select information for showing the post
+		//if the topic was succesfully added to the database, select information for showing the topic
         if(mysqli_affected_rows($dbc) == 1) {
-            $q = "SELECT post_id, date_posted FROM posts WHERE message='$m' ORDER BY date_posted DESC LIMIT 0,1";
+            $q = "SELECT topic_id FROM topics WHERE subject='$s' ORDER BY topic_id DESC LIMIT 0,1";
             $r = mysqli_query($dbc, $q) or trigger_error("Query: $q\n<br />MYSQL error: " . mysqli_error($dbc));
 			
 			//return user info with JSON
@@ -40,7 +40,7 @@ if (isset($_GET['email'], $_GET['topicid'], $_GET['message'])) { //check if all 
         $info['result'] = 'USER_UNKNOWN';
         echo json_encode($info);
     }
-} else {
+} else {//if not all necessary info was received
     $info['result'] = 'INCOMPLETE';
     echo json_encode($info);
 }

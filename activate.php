@@ -1,6 +1,6 @@
 <?php #activate.php
-    require('mysqli_connect.php');
     require('includes/config.php');
+    require(MYSQL);
 
     if(isset($_GET['x'], $_GET['y']) && filter_var($_GET['x'], FILTER_VALIDATE_EMAIL) && (strlen($_GET['y']) == 32)) {
         $q = "UPDATE users SET active=NULL WHERE (email='" . mysqli_real_escape_string($dbc, $_GET['x']) . "' AND active='" . mysqli_real_escape_string($dbc, $_GET['y']) . "') LIMIT 1";
@@ -17,8 +17,8 @@
             header("Location: $url");
             exit();
         }
-    mysqli_close($dbc);
     } else {
         echo 'Something went wrong, please try again.';
     }
+mysqli_close($dbc);
 ?>

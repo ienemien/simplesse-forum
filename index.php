@@ -1,10 +1,9 @@
 <?php   
     //session_start();
     require('includes/config.php');
-    require('mysqli_connect.php');
+    require(MYSQL);
     //header
     include('includes/header.html');
-    //include('includes/fakecontent.html');
 
     //get all forum subjects from database
     $q = "SELECT f.forum_id, f.forum_name, COUNT(t.topic_id) AS topicnr FROM forums AS f LEFT JOIN topics AS t USING(forum_id) GROUP BY(forum_id) ORDER BY(forum_id)";
@@ -21,7 +20,7 @@
             );
         } //end of while loop   
         mysqli_free_result($r);
-    }//end of forum IF
+    }
 
     //get topic info
     $q = "SELECT t.forum_id, t.topic_id, t.subject, MAX(p.date_posted) AS last_post, COUNT(p.post_id) AS postnr FROM topics AS t LEFT JOIN posts AS p USING (topic_id) GROUP BY topic_id ORDER BY last_post DESC";
@@ -38,10 +37,10 @@
             );
         }//end of while loop
         mysqli_free_result($r);
-    }//end of if */
+    }
 
     //get post info
-    $q = "SELECT p.post_id, p.topic_id, p.message, p.date_posted, u.username FROM posts AS p LEFT JOIN users AS u USING(user_id) GROUP BY(post_id) ORDER BY date_posted DESC";
+    $q = "SELECT p.post_id, p.topic_id, p.message, p.date_posted, u.username, u.email FROM posts AS p LEFT JOIN users AS u USING(user_id) GROUP BY(post_id) ORDER BY date_posted DESC";
     $r = mysqli_query($dbc, $q);
     if(mysqli_num_rows($r) > 0) {
         $posts = array();
@@ -51,12 +50,13 @@
                 'topic_id' => $row['topic_id'],
                 'message' => $row['message'],
                 'date_posted' => $row['date_posted'],
-                'username' => $row['username']
+                'username' => $row['username'],
+				'email' => $row['email']
             );
         }//end of while loop
         mysqli_free_result($r);
         mysqli_close($dbc);
-    }//end of if
+    }
     
 
         // show forums
@@ -64,15 +64,23 @@
         echo '<section class="forum-subject">
                     <div class="forum-bar">
                         <div class="forum-info-left">
-                            <img class="forum-icn forum-arrow" src="img/forum-arrow.png" alt="forum arrow" />
-                            <h3>' . $finfo['forum_name'] . '</h3>
-                            </div>
-                            <div class="forum-info-right">
-                                <img class="forum-icn" src="img/topics.png" alt="topic icon" />
-                                <h3>' . $finfo['topicnr'] . '</h3>
-                                <img class="forum-icn" src="img/newtopic.png" alt="new topic" />
-                            </div>
-                        </div>';
+							<img class="forum-icn forum-arrow" src="img/forum-arrow.png" alt="forum arrow" />
+							<h3>' . $finfo['forum_name'] . '</h3>
+						</div>
+                        <div class="forum-info-right">
+							<img id="new-topic-btn" class="forum-icn" src="img/topics.png" alt="topic icon" />
+							<h3>' . $finfo['topicnr'] . '</h3>
+                        </div>
+					</div>
+					<div class="new-topic">
+						<form class="topic-form">
+							<textarea id="topic-subject" type="text" rows="1" cols="80" placeholder="New topic subject" /></textarea>
+							<input type="hidden" id="forumid" name="forumid" value="' . $finfo['forum_id'] . '">
+							<input class="submit-btn" type="submit" value="Submit" />
+						</form>
+						<span class="new-topic-results"></span>
+					</div>';
+		//show topics
         foreach($topics as $trow => $tinfo) {
             if($tinfo['forum_id'] == $finfo['forum_id']) {
                 echo '<section class="topic-subject">
@@ -80,9 +88,7 @@
                     <div class="topic-info-left">
                         <img class="topic-icn topic-arrow" src="img/topic-arrow.png" alt="new message" />' . $tinfo['subject'] . '</div>
                     <div class="topic-info-right">
-                        <img class="topic-icn" src="img/new-icn.png" alt="new message" />
-                        <img class="topic-icn" src="img/message-icn.png" alt ="message icon" />' . $tinfo['postnr'] . '
-                        <img class="topic-icn" src="img/reply-btn.png" alt="reply button" />
+                        <img class="topic-icn" src="img/message-icn.png" alt ="message icon" />' . $tinfo['postnr'] . '<img id="delete-topic" class="topic-icn" src="img/delete-btn.png" alt ="message icon" />
                     </div>
                 </div>
                 <div class="posts-container">
@@ -94,19 +100,38 @@
                             <span class="post-results"></span>
                         </form>
                     </div>';
+				
+				//show posts
                 foreach($posts as $prow => $pinfo) {
                     if($pinfo['topic_id'] == $tinfo['topic_id']){
-                        echo '<div class="post">
+                        echo '<div class="post row">
                                 <div class="user-info">
                                     <img class="user-pic" src="img/user.png" alt="userpic" />
                                     <ul>
                                         <li><img class="user-icn" src="img/user-icn.png" alt="user icon" />' . $pinfo['username'] .     '</li>
-                                        <li><img class="user-icn" src="img/message-icn.png" alt="user icon" /> 15</li>
+                                        <li><a id="postmail" href="mailto:' . $pinfo['email'] . '"><img class="user-icn" src="img/message-icn.png" alt="user icon" /></a></li>
                                     </ul>
                                 </div>
-                                <h4 class="post-header">Sent on '. $pinfo['date_posted'] . '</h4>
-                                <hr />
-                                <p class="post-text">'. $pinfo['message'] . '</p>
+								<h4 class="post-header">Sent on '. $pinfo['date_posted'] . '</h4>
+								<div class="post-head">
+									<form class="delete-post-form">
+										<input type="hidden" id="postid" name="postid" value="' . $pinfo['post_id'] . '">
+										<input class="submit-btn" type="submit" value="Delete" />
+									</form>
+									<input id="edit-post-btn" type="submit" class="submit-btn" value="Edit" />
+									<div class="edit-post">
+										<form class="edit-post-form">
+												<textarea id="newmessage" name="newmessage" cols="50" rows="10"></textarea>
+												<input type="hidden" id="postid" name="postid" value="' . $pinfo['post_id'] . '">
+												<input class="submit-btn" type="submit" value="Save" />
+											</form>
+									</div>
+									<span class="edit-message-result"></span>
+								</div>
+								<div class="post-content"
+									<hr />
+                                	<p class="post-text">'. $pinfo['message'] . '</p>
+								</div>
                             </div>';
                     }
                 }

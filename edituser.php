@@ -1,6 +1,6 @@
 <?php 
-require('mysqli_connect.php');
 require('includes/config.php');
+require(MYSQL);
 
 // Need current info + new info
 if (isset($_GET['curname'], $_GET['curmail'], $_GET['newname'], $_GET['newmail'], $_GET['newpass'])) {
@@ -17,16 +17,10 @@ if (isset($_GET['curname'], $_GET['curmail'], $_GET['newname'], $_GET['newmail']
         $q = "UPDATE users SET username='$nu', email='$ne', pass=SHA1('$np') WHERE username='$cu' AND email='$ce'";
         $r = @mysqli_query($dbc, $q);
         
-		// Must match specific values (later get values from sql query)
+		// Must match specific values
 		if (mysqli_affected_rows($dbc) == 1) {
             $info['result'] = 'CORRECT';
             echo json_encode($info);
-            
-            //store data in session
-            //$_SESSION['user_id'] = $row['user_id'];
-            //$_SESSION['username'] = $row['username'];
-            //$_SESSION['email'] = $row['email'];
-
 			mysqli_close($dbc);
 		} else { // something went wrong
 			$info['result'] = 'INCORRECT';
