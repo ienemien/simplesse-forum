@@ -5,12 +5,24 @@
                     
                     <!-- current user info -->
                     <div id="show-user" class="current-user">
-                        <img class="user-pic" src="img/user.png" alt="userpic" />
-                        <ul id="current-user-info" class="unstyled">
-                            <li><img class="user-icn" src="img/user-icn.png" alt="user icon" /><span id="username"></span></li>
-                            <li><img class="user-icn" src="img/message-icn.png" alt="email icon" /><span id="mailadd"></span></li>
-                            <li id="edit-user-btn"><img class="user-icn" src="img/newtopic.png" alt="edit user info" /></li>
-                        </ul>
+						<div id="user-pic-block">
+							<img class="user-pic" src="img/user.png" alt="userpic" />
+							<img id="edit-pic-icn" class="user-icn" src="img/newtopic.png" alt="edit user info" />
+							<form id="uploadPic">
+								<ul class="unstyled">
+									<li><input type="file" class="submit-btn" name="upload" /></li>
+									<li><input type="submit" class="submit-btn" name="submit" value="Submit" /></li>
+								</ul>
+							</form>
+							<span id="result"></span>
+						</div>
+						<div id="current-user-info">
+							<ul class="unstyled">
+								<li><img class="user-icn" src="img/user-icn.png" alt="user icon" /><span id="username"></span></li>
+								<li><img class="user-icn" src="img/message-icn.png" alt="email icon" /><span id="mailadd"></span></li>
+								<li id="edit-user-btn"><img class="user-icn" src="img/newtopic.png" alt="edit user info" /></li>
+							</ul>
+						</div>
                     </div>
                     
                     <!-- edit user form -->

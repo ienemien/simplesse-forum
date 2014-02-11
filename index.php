@@ -40,7 +40,7 @@
     }
 
     //get post info
-    $q = "SELECT p.post_id, p.topic_id, p.message, p.date_posted, u.username, u.email FROM posts AS p LEFT JOIN users AS u USING(user_id) GROUP BY(post_id) ORDER BY date_posted DESC";
+    $q = "SELECT p.post_id, p.topic_id, p.message, p.date_posted, u.username, u.email, u.userpic FROM posts AS p LEFT JOIN users AS u USING(user_id) GROUP BY(post_id) ORDER BY date_posted DESC";
     $r = mysqli_query($dbc, $q);
     if(mysqli_num_rows($r) > 0) {
         $posts = array();
@@ -51,7 +51,8 @@
                 'message' => $row['message'],
                 'date_posted' => $row['date_posted'],
                 'username' => $row['username'],
-				'email' => $row['email']
+				'email' => $row['email'],
+				'userpic' => $row['userpic']
             );
         }//end of while loop
         mysqli_free_result($r);
@@ -106,7 +107,7 @@
                     if($pinfo['topic_id'] == $tinfo['topic_id']){
                         echo '<div class="post row">
                                 <div class="user-info">
-                                    <img class="user-pic" src="img/user.png" alt="userpic" />
+                                    <img class="user-pic" src="uploads/' . $pinfo['userpic'] . '" alt="userpic" />
                                     <ul>
                                         <li><img class="user-icn" src="img/user-icn.png" alt="user icon" />' . $pinfo['username'] .     '</li>
                                         <li><a id="postmail" href="mailto:' . $pinfo['email'] . '"><img class="user-icn" src="img/message-icn.png" alt="user icon" /></a></li>

@@ -1,5 +1,15 @@
 $(document).ready(function() {
 	
+	//function to validate email address
+	function isEmail($email) {
+		var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+		if( !emailReg.test( $email ) ) {
+			return false;
+  		} else {
+			return true;
+		}
+	}
+	
 	//function to rotate topicarrow
 	var rotateArrow = function(item) {
         if ($(item).data("rot") === 0) {
@@ -28,6 +38,7 @@ $(document).ready(function() {
                 var email = $('#mailadd').text();
                 var topicid = $('#topicid', topic).val();
                 var username = $('#username').text();
+				var userpic = $('.user-pic', '#user-pic-block').attr('src');
     
                 // Create an object for the form data:
                 var data = new Object();
@@ -57,7 +68,7 @@ $(document).ready(function() {
                         var date = info['date_posted'];
                         
                         //add new post
-                        $('.new-post', topic).after('<div class="post row"><div class="user-info"><img class="user-pic" src="img/user.png" alt="userpic" /><ul><li><img class="user-icn" src="img/user-icn.png" alt="user icon" />' + username + '</li><li><a id="postmail" href="mailto:' + email + '"><img class="user-icn" src="img/message-icn.png" alt="user icon" /></a></li></ul></div><h4 class="post-header">Sent on ' + date + '</h4><div class="post-head"><form class="delete-post-form"><input type="hidden" id="postid" name="postid" value="' + post_id + '"><input class="submit-btn" type="submit" value="Delete" /></form><input id="edit-post-btn" type="submit" class="submit-btn" value="Edit" /><div class="edit-post"><form class="edit-post-form"><textarea id="newmessage" name="newmessage" cols="50" rows="10"></textarea><input type="hidden" id="postid" name="postid" value="' + post_id +'"><input class="submit-btn" type="submit" value="Save" /></form></div><span class="edit-message-result"></span></div><div class="post-content"><hr /><p class="post-text">' + message + '</p></div></div>');
+                        $('.new-post', topic).after('<div class="post row"><div class="user-info"><img class="user-pic" src="' + userpic + '" alt="userpic" /><ul><li><img class="user-icn" src="img/user-icn.png" alt="user icon" />' + username + '</li><li><a id="postmail" href="mailto:' + email + '"><img class="user-icn" src="img/message-icn.png" alt="user icon" /></a></li></ul></div><h4 class="post-header">Sent on ' + date + '</h4><div class="post-head"><form class="delete-post-form"><input type="hidden" id="postid" name="postid" value="' + post_id + '"><input class="submit-btn" type="submit" value="Delete" /></form><input id="edit-post-btn" type="submit" class="submit-btn" value="Edit" /><div class="edit-post"><form class="edit-post-form"><textarea id="newmessage" name="newmessage" cols="50" rows="10"></textarea><input type="hidden" id="postid" name="postid" value="' + post_id +'"><input class="submit-btn" type="submit" value="Save" /></form></div><span class="edit-message-result"></span></div><div class="post-content"><hr /><p class="post-text">' + message + '</p></div></div>');
 						
 						//add function to delete newly added post
 						$('.post').each(function() {
@@ -81,7 +92,7 @@ $(document).ready(function() {
     					}); //end of applying delete function to each post
                         
                         //show success message
-                        $('.post-results', topic).text('Your message has been posted!');
+                        $('.post-results', topic).show().text('Your message has been posted!').delay(2000).fadeOut(500);
                         $('.post-results', topic).addClass('success');
                         
                     } else if (info['result'] == 'INCORRECT') {
@@ -134,7 +145,9 @@ $(document).ready(function() {
                     if (response == 'CORRECT') {
                         //replace post with success message
                         $(post).replaceWith("<p id='delete-success' class='success'>Your message has been deleted.</p>");
-                        
+						setTimeout(function(){
+							$('#delete-success').fadeOut(500);
+						},2000);
                     } else if (response == 'INCORRECT') {
                         $('#post-results').text('Something went wrong, please try again!');
                         $('#post-results').addClass('error');
@@ -190,8 +203,7 @@ $(document).ready(function() {
 					$('.post-text', post).text(newmessage);
 					
 					//show success message
-					$('.edit-message-result', post).text('Your message has been updated!');
-					$('.edit-message-result', post).addClass('success');
+					$('.edit-message-result', post).show().text('Your message has been updated!').addClass('success').delay(2000).fadeOut(500);
 					
 				} else if (response == 'INCORRECT') {
 					$('.edit-message-result', post).text('Could not edit message, please try again!');
@@ -239,8 +251,10 @@ $(document).ready(function() {
 				// Worked:
 				if (response == 'CORRECT') {
 					//replace post with success message
-					$(topic).replaceWith("<p id='delete-success' class='success'>Your topic has been deleted.</p>");
-					
+					$(topic).show().replaceWith("<p id='delete-success' class='success'>Your topic has been deleted.</p>");
+					setTimeout(function(){
+						$('#delete-success').slideUp(500);
+					},2000);
 				} else if (response == 'INCORRECT') {
 					$('#post-results', topic).text('Something went wrong, please try again!');
 					$('#post-results', topic).addClass('error');
@@ -290,83 +304,123 @@ $(document).ready(function() {
     
     //handle registration form
     $('#register-form').submit(function() {
-        
-        //validate email (create functions to do this)
-        //validate passfields
-        //validate username
-        
-        if($('#regpass1').val() == $('#regpass2').val()){
-            
-            //set the variables
-            var newname = $('#regname').val();
-            var newmail = $('#regmail').val();
-            var newpass = $('#regpass1').val();
-        
-            // Create an object for the form data:
-			var data = new Object();
-            data.newname = newname;
-            data.newmail = newmail;
-            data.newpass = newpass;
-			
-			// Create an object of Ajax options:
-			var options = new Object();
-
-			// Establish each setting:
-			options.data = data;
-			options.dataType = 'text';
-			options.type = 'get';
-			options.success = function(response) {
-				
-                //decode json response
-                var info = JSON.parse(response);
-                
-				// Worked:
-				if (info['result'] == 'CORRECT') {
-	
-					// Hide the form:
-					$('#register').hide();
-                    $('#register-form').hide();
-                    $('#footer').height(100);
-                    
-                    //set user info variables
-                    var username = info['newname'];
-                    var email = info['newmail'];
-                    
-                    //show success message
-                    $('#edit-success').text('Thank you ' + username + ' for registering! You will receive an email on ' + email + ' with a link to activate your account.');
-					$('#edit-success').addClass('success');
-				} else if (info['result'] == 'INCORRECT') {
-					$('#reg-results').text('Could not register, please try again later!');
-					$('#reg-results').addClass('error');
-				} else if (info['result'] == 'INCOMPLETE') {
-					$('#reg-results').text('Please enter all fields!');
-					$('#reg-results').addClass('error');
-				} else if (info['result'] == 'INVALID_EMAIL') {					
-					$('#reg-results').text('Please provide a valid email address!');
-					$('#reg-results').addClass('error');
-                } else if (info['result'] == 'INVALID_USER') {					
-					$('#reg-results').text('Please provide a valid username!');
-					$('#reg-results').addClass('error');
-                } else if (info['result'] == 'INVALID_PASS') {					
-					$('#reg-results').text('Please provide a valid password!');
-					$('#reg-results').addClass('error');
-				} else if (info['result'] == 'NOT_UNIQUE') {
-                    $('#reg-results').text('Email Address is already registered!');
-					$('#reg-results').addClass('error');
-                } else {
-                    $('#reg-results').text('An unknown error occured, please try again later!');
-					$('#reg-results').addClass('error');
-                }
-			} // End of success.
-			options.url = 'register.php';
-
-			// Perform the request:
-			$.ajax(options);
 		
-		} else { 
-            $('#reg-results').text('Passwords do not match!');
-            $('#reg-results').addClass('error');
-        } // End of pass1 and pass2 IF
+		//validate username field
+		if ($('#regname').val().length >= 6) {
+			var newname = $('#regname').val();
+			$('#regname').removeClass('error').addClass('success');
+		} else {
+			$('#regname').removeClass('success').addClass('error');
+			$('#reg-results').removeClass('success').addClass('error').text('Please enter a username!');
+		}
+		
+		// Validate  email address:
+		if ($('#regmail').val().length >= 6) {
+			if(isEmail($('#regmail').val())){
+				// Get the email address:
+				var newmail = $('#regmail').val();
+				$('#regmail').removeClass('error').addClass('success');
+			} else {
+				$('#regmail').removeClass('success').addClass('error');
+				$('#reg-results').removeClass('success').addClass('error').text('Please enter a valid email address!');
+			}
+		} else { // No email address!
+			$('#regmail').removeClass('success').addClass('error');
+			$('#reg-results').removeClass('success').addClass('error').text('Please enter your email address!');
+		}
+		
+		//validate password 1
+		if ($('#regpass1').val().length >= 6) {
+			var newpass1 = $('#regpass1').val();
+			$('#regpass1').removeClass('error').addClass('success');
+		} else {
+			$('#regpass1').removeClass('success').addClass('error');
+			$('#regpass1').removeClass('success').addClass('error').text('Please enter a password!');
+		}
+		
+		//validate password 2
+		if ($('#regpass2').val().length >= 6) {
+			var newpass2 = $('#regpass2').val();
+			$('#regpass2').removeClass('error').addClass('success');
+		} else {
+			$('#regpass2').removeClass('success').addClass('error');
+			$('#regpass2').removeClass('success').addClass('error').text('Please enter a password!');
+		}
+        
+		if(newname && newmail && newpass1 && newpass2){
+			if(newpass1 == newpass2){
+				
+				var newpass = $('#regpass1').val();
+			
+				// Create an object for the form data:
+				var data = new Object();
+				data.newname = newname;
+				data.newmail = newmail;
+				data.newpass = newpass;
+				
+				// Create an object of Ajax options:
+				var options = new Object();
+	
+				// Establish each setting:
+				options.data = data;
+				options.dataType = 'text';
+				options.type = 'get';
+				options.success = function(response) {
+					
+					//decode json response
+					var info = JSON.parse(response);
+					
+					// Worked:
+					if (info['result'] == 'CORRECT') {
+		
+						// Hide the form:
+						$('#register').hide();
+						$('#register-form').hide();
+						$('#footer').height(100);
+						
+						//set user info variables
+						var username = info['newname'];
+						var email = info['newmail'];
+						
+						//show success message
+						$('#edit-success').text('Thank you ' + username + ' for registering! You will receive an email on ' + email + ' with a link to activate your account.');
+						$('#edit-success').removeClass('error').addClass('success');
+					} else if (info['result'] == 'INCORRECT') {
+						$('#reg-results').text('Could not register, please try again later!');
+						$('#reg-results').addClass('error');
+					} else if (info['result'] == 'INCOMPLETE') {
+						$('#reg-results').text('Please enter all fields!');
+						$('#reg-results').addClass('error');
+					} else if (info['result'] == 'INVALID_EMAIL') {					
+						$('#reg-results').text('Please provide a valid email address!');
+						$('#reg-results').addClass('error');
+					} else if (info['result'] == 'INVALID_USER') {					
+						$('#reg-results').text('Please provide a valid username!');
+						$('#reg-results').addClass('error');
+					} else if (info['result'] == 'INVALID_PASS') {					
+						$('#reg-results').text('Please provide a valid password!');
+						$('#reg-results').addClass('error');
+					} else if (info['result'] == 'NOT_UNIQUE') {
+						$('#reg-results').text('Email Address is already registered!');
+						$('#reg-results').addClass('error');
+					} else {
+						$('#reg-results').text('An unknown error occured, please try again later!');
+						$('#reg-results').addClass('error');
+					}
+				} // End of success.
+				options.url = 'register.php';
+	
+				// Perform the request:
+				$.ajax(options);
+			
+			} else { 
+				$('#reg-results').removeClass('success').addClass('error').text('Passwords do not match!');
+				$('#regpass1').removeClass('success').addClass('error');
+				$('#regpass2').removeClass('success').addClass('error');
+			} // End of pass1 and pass2 IF
+		} else {
+			$('#reg-results').removeClass('success').addClass('error').text('Please enter all fields!');
+		}
 		
 		// Return false to prevent an actual form submission:
 		return false;
@@ -381,14 +435,17 @@ $(document).ready(function() {
 		
 		// Validate the email address:
 		if ($('#email').val().length >= 6) {
-			
-			// Get the email address:
-			email = $('#email').val();
-			$('#email').removeClass('error').addClass('success');
-		} else { // Invalid email address!
+			if(isEmail($('#email').val())){
+				// Get the email address:
+				email = $('#email').val();
+				$('#email').removeClass('error').addClass('success');
+			} else {
+				$('#email').removeClass('success').addClass('error');
+				$('#results').removeClass('success').addClass('error').text('Please enter a valid email address!');
+			}
+		} else { // No email address!
 			$('#email').removeClass('success').addClass('error');
-			$('#results').text('Please enter your email address!');
-            $('#result-bar').addClass('error');
+			$('#results').removeClass('success').addClass('error').text('Please enter your email address!');
 		}
 		
 		// Validate the password:
@@ -396,9 +453,8 @@ $(document).ready(function() {
 			password = $('#password').val();
 			$('#password').removeClass('error').addClass('success');
 		} else {
-			$('#password').addClass('error');
-            $('#result-bar').addClass('error');
-			$('#results').text('Please enter your password!');
+			$('#password').removeClass('success').addClass('error');
+			$('#results').removeClass('success').addClass('error').text('Please enter your password!');
 		}
 				
 		// If appropriate, perform the Ajax request:
@@ -437,19 +493,21 @@ $(document).ready(function() {
                     $('#edit-user').hide();
                     $('#edit-user-form').hide();
                     $('#register-btn').hide();
+					$('#uploadPic').hide();
 	
 					// Show a welcome message
                     $('#result-bar').show();
-					$('#result-bar').removeClass('error').addClass('success');
-                    $('#results').text('You are now logged in!');
+                    $('#results').show().removeClass('error').addClass('success').text('You are now logged in!').delay(2000).fadeOut(500);
                     
                     //set user info variables
                     var username = info['username'];
                     var email = info['email'];
+					var userpic = info['userpic'];
 					
                     //update user info with the info from php
                     $('#username').text(username);
                     $('#mailadd').text(email);
+					$('.user-pic', '#user-pic-block').replaceWith('<img class="user-pic" src="uploads/' + userpic + '" alt="userpic" />');
 					
 					//show delete and edit buttons for this user
 					$('.post').each(function() {
@@ -479,13 +537,13 @@ $(document).ready(function() {
 					});
 				} else if (info['result'] == 'INCORRECT') {
 					$('#results').text('Invalid email or password');
-					$('#results').addClass('error');
+					$('#results').removeClass('success').addClass('error');
 				} else if (info['result'] == 'INCOMPLETE') {
 					$('#results').text('Please provide an email address and a password!');
-					$('#results').addClass('error');
+					$('#results').removeClass('success').addClass('error');
 				} else if (info['result'] == 'INVALID_EMAIL') {					
 					$('#results').text('Please provide your email address!');
-					$('#results').addClass('error');
+					$('#results').removeClass('success').addClass('error');
 				}
 				
 			}; // End of success.
@@ -516,7 +574,7 @@ $(document).ready(function() {
         $('#register-btn').show();
         
         //show loggedout message
-        $('#results').addClass('success').text('You are now logged out!');
+        $('#results').show().addClass('success').text('You are now logged out!').delay(2000).fadeOut(500);
         
         // Return false to prevent an actual form submission:
 		return false;
