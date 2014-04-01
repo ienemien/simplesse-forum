@@ -1,5 +1,31 @@
 $(document).ready(function() {
 	
+	//hide on opening of page
+    //hide logout button
+    $('#logout').hide();
+    
+    //hide content
+    $('#show-user').hide();
+    $('#edit-user').hide();
+    $('#register').hide();
+	$('.new-post').hide();
+	$('.post-head').hide();
+
+	//hide edit post form
+	$('.edit-post').hide();
+	
+	//hide new topic form
+	$('.new-topic').hide();
+
+    //show registration form when clicking button
+    $('#register-btn').click(function() {
+        $('#login').hide();
+        $('#register-btn').hide();
+        $('#footer').height(200);
+        $('#register').show();
+        $('#register-form').show();
+    });
+	
 	//function to validate email address
 	function isEmail($email) {
 		var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
@@ -275,32 +301,6 @@ $(document).ready(function() {
 		return false;
 		});
 	}//end of function for deleting topic
-	
-	
-	//hide on opening of page
-    //hide logout button
-    $('#logout').hide();
-    
-    //hide content
-    $('#content').hide();
-    $('#show-user').hide();
-    $('#edit-user').hide();
-    $('#register').hide();
-
-	//hide edit post form
-	$('.edit-post').hide();
-	
-	//hide new topic form
-	$('.new-topic').hide();
-
-    //show registration form when clicking button
-    $('#register-btn').click(function() {
-        $('#login').hide();
-        $('#register-btn').hide();
-        $('#footer').height(200);
-        $('#register').show();
-        $('#register-form').show();
-    });
     
     //handle registration form
     $('#register-form').submit(function() {
@@ -481,19 +481,18 @@ $(document).ready(function() {
 				if (info['result'] == 'CORRECT') {
 	
 					// Hide the form:
-					$('#login').hide();
-                    
-                    //show logout button:
-                    $('#logout').show();
+					$('#login').hide(); //hide login form
+					$('#register-btn').hide(); //hide register button
+                    $('#logout').show(); //show logout button
                     
                     //show content and footer
-                    $('#content').slideDown();
-                    $('#footer').slideDown();
+                    //$('#content').slideDown();
+                    //$('#footer').slideDown();
                     $('#show-user').show();
                     $('#edit-user').hide();
                     $('#edit-user-form').hide();
-                    $('#register-btn').hide();
 					$('#uploadPic').hide();
+					$('.new-post').show();
 	
 					// Show a welcome message
                     $('#result-bar').show();
